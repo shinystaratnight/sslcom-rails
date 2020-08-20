@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200731200909) do
+ActiveRecord::Schema.define(version: 20200819145200) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        :limit=>255
@@ -139,6 +139,75 @@ ActiveRecord::Schema.define(version: 20200731200909) do
   add_index "assignments", ["user_id", "ssl_account_id", "role_id"], :name=>"index_assignments_on_user_id_and_ssl_account_id_and_role_id", :using=>:btree
   add_index "assignments", ["user_id", "ssl_account_id"], :name=>"index_assignments_on_user_id_and_ssl_account_id", :using=>:btree
 
+  create_table "users", force: :cascade do |t|
+    t.integer  "ssl_account_id",      :limit=>4, :index=>{:name=>"index_users_on_ssl_acount_id", :using=>:btree}
+    t.string   "login",               :limit=>255, :null=>false, :index=>{:name=>"index_users_on_login", :using=>:btree}
+    t.string   "email",               :limit=>255, :null=>false, :index=>{:name=>"index_users_on_email", :using=>:btree}
+    t.string   "crypted_password",    :limit=>255
+    t.string   "password_salt",       :limit=>255
+    t.string   "persistence_token",   :limit=>255, :null=>false
+    t.string   "single_access_token", :limit=>255, :null=>false
+    t.string   "perishable_token",    :limit=>255, :null=>false, :index=>{:name=>"index_users_on_perishable_token", :using=>:btree}
+    t.string   "status",              :limit=>255, :index=>{:name=>"index_users_on_status_and_login_and_email", :with=>["login", "email"], :using=>:btree}
+    t.integer  "login_count",         :limit=>4, :default=>0, :null=>false
+    t.integer  "failed_login_count",  :limit=>4, :default=>0, :null=>false
+    t.datetime "last_request_at"
+    t.datetime "current_login_at"
+    t.datetime "last_login_at"
+    t.string   "current_login_ip",    :limit=>255
+    t.string   "last_login_ip",       :limit=>255
+    t.boolean  "active",              :default=>false, :null=>false
+    t.string   "openid_identifier",   :limit=>255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "first_name",          :limit=>255
+    t.string   "last_name",           :limit=>255
+    t.string   "phone",               :limit=>255
+    t.string   "organization",        :limit=>255
+    t.string   "address1",            :limit=>255
+    t.string   "address2",            :limit=>255
+    t.string   "address3",            :limit=>255
+    t.string   "po_box",              :limit=>255
+    t.string   "postal_code",         :limit=>255
+    t.string   "city",                :limit=>255
+    t.string   "state",               :limit=>255
+    t.string   "country",             :limit=>255
+    t.boolean  "is_auth_token"
+    t.integer  "default_ssl_account", :limit=>4, :index=>{:name=>"index_users_on_default_ssl_account", :using=>:btree}
+    t.integer  "max_teams",           :limit=>4
+    t.integer  "main_ssl_account",    :limit=>4
+    t.boolean  "persist_notice",      :default=>false
+    t.string   "duo_enabled",         :limit=>255, :default=>"enabled"
+    t.string   "avatar_file_name",    :limit=>255
+    t.string   "avatar_content_type", :limit=>255
+    t.integer  "avatar_file_size",    :limit=>4
+    t.datetime "avatar_updated_at"
+    t.string   "authy_user",          :limit=>255
+    t.string   "phone_prefix",        :limit=>255
+  end
+  add_index "users", ["id", "ssl_account_id", "status"], :name=>"index_users_on_status_and_ssl_account_id", :using=>:btree
+  add_index "users", ["id", "status"], :name=>"index_users_on_status", :using=>:btree
+  add_index "users", ["login", "email"], :name=>"index_users_l_e", :type=>:fulltext
+  add_index "users", ["login", "email"], :name=>"index_users_on_login_and_email", :using=>:btree
+  add_index "users", ["ssl_account_id", "login", "email"], :name=>"index_users_on_ssl_account_id_and_login_and_email", :using=>:btree
+
+  create_table "audits", force: :cascade do |t|
+    t.integer  "auditable_id",    :limit=>4
+    t.string   "auditable_type",  :limit=>255, :index=>{:name=>"auditable_index", :with=>["auditable_id", "version"], :using=>:btree}
+    t.integer  "associated_id",   :limit=>4
+    t.string   "associated_type", :limit=>255, :index=>{:name=>"associated_index", :with=>["associated_id"], :using=>:btree}
+    t.integer  "user_id",         :limit=>4, :index=>{:name=>"user_index", :with=>["user_type"], :using=>:btree}, :foreign_key=>{:references=>"users", :name=>"fk_audits_user_id", :on_update=>:restrict, :on_delete=>:restrict}
+    t.string   "user_type",       :limit=>255
+    t.string   "username",        :limit=>255
+    t.string   "action",          :limit=>255
+    t.text     "audited_changes", :limit=>65535
+    t.integer  "version",         :limit=>4, :default=>0
+    t.string   "comment",         :limit=>255
+    t.string   "remote_address",  :limit=>255
+    t.string   "request_uuid",    :limit=>255, :index=>{:name=>"index_audits_on_request_uuid", :using=>:btree}
+    t.datetime "created_at",      :index=>{:name=>"index_audits_on_created_at", :using=>:btree}
+  end
+
   create_table "authentications", force: :cascade do |t|
     t.integer  "user_id",    :limit=>4, :index=>{:name=>"index_authentications_on_user_id", :using=>:btree}
     t.string   "provider",   :limit=>255
@@ -195,21 +264,17 @@ ActiveRecord::Schema.define(version: 20200731200909) do
   end
 
   create_table "blocklists", force: :cascade do |t|
-    t.string  "pattern",            :limit=>255
-    t.boolean "regular_expression"
-    t.boolean "common_name"
-    t.boolean "organization"
-    t.boolean "organization_unit"
-    t.boolean "location"
-    t.boolean "state"
-    t.boolean "country"
-    t.boolean "san"
-    t.string  "type",               :limit=>255
-    t.string  "label",              :limit=>255
-    t.text    "description",        :limit=>65535
-    t.text    "notes",              :limit=>65535
-    t.text    "exempt",             :limit=>65535
+    t.string   "type",        :limit=>255
+    t.string   "domain",      :limit=>255
+    t.integer  "validation",  :limit=>4
+    t.string   "status",      :limit=>255
+    t.string   "reason",      :limit=>255
+    t.string   "description", :limit=>255
+    t.text     "notes",       :limit=>65535
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
+  add_index "blocklists", ["id", "type"], :name=>"index_blocklists_on_id_and_type", :using=>:btree
 
   create_table "ca_api_requests", force: :cascade do |t|
     t.integer  "api_requestable_id",   :limit=>4, :index=>{:name=>"index_ca_api_requests_on_api_requestable", :with=>["api_requestable_type"], :using=>:btree}
@@ -1165,11 +1230,112 @@ ActiveRecord::Schema.define(version: 20200731200909) do
     t.datetime "updated_at"
   end
 
+  create_table "registration_authority_api_audit_logs", force: :cascade do |t|
+    t.string   "loggable_type", :limit=>255
+    t.integer  "loggable_id",   :limit=>4
+    t.text     "request",       :limit=>65535
+    t.text     "response",      :limit=>65535
+    t.integer  "status",        :limit=>4
+    t.string   "type",          :limit=>255
+    t.datetime "created_at",    :null=>false
+    t.datetime "updated_at",    :null=>false
+  end
+
+  create_table "registration_authority_blocklist_entries", force: :cascade do |t|
+    t.string   "pattern",           :limit=>255
+    t.text     "description",       :limit=>65535
+    t.string   "type",              :limit=>255
+    t.boolean  "common_name"
+    t.boolean  "organization"
+    t.boolean  "organization_unit"
+    t.boolean  "location"
+    t.boolean  "state"
+    t.boolean  "country"
+    t.boolean  "san"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "registration_authority_blocklist_entry_exemptions", force: :cascade do |t|
+    t.integer  "blocklist_entry_id", :limit=>4
+    t.integer  "account_id",         :limit=>4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "registration_authority_files", force: :cascade do |t|
+    t.string   "attachment",      :limit=>255
+    t.string   "attachable_type", :limit=>255
+    t.integer  "attachable_id",   :limit=>4
+    t.integer  "user_id",         :limit=>4
+    t.integer  "string",          :limit=>4
+    t.integer  "status",          :limit=>4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "registration_authority_notes", force: :cascade do |t|
+    t.text     "body",         :limit=>65535
+    t.string   "notable_type", :limit=>255
+    t.integer  "notable_id",   :limit=>4
+    t.integer  "user_id",      :limit=>4
+    t.integer  "status",       :limit=>4
+    t.datetime "created_at",   :null=>false
+    t.datetime "updated_at",   :null=>false
+  end
+
+  create_table "registration_authority_validation_documents", force: :cascade do |t|
+    t.integer  "certificate_order_id",  :limit=>4
+    t.integer  "validation_profile_id", :limit=>4
+    t.integer  "status",                :limit=>4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "workflow_state",        :limit=>255
+  end
+
+  create_table "registration_authority_validation_profiles", force: :cascade do |t|
+    t.string   "name",            :limit=>255
+    t.text     "description",     :limit=>65535
+    t.integer  "validation_type", :limit=>4
+    t.integer  "version",         :limit=>4
+    t.integer  "status",          :limit=>4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "registration_authority_validation_rulings", force: :cascade do |t|
+    t.integer  "certificate_order_id", :limit=>4
+    t.integer  "validation_step_id",   :limit=>4
+    t.integer  "created_by",           :limit=>4
+    t.datetime "created_on"
+    t.integer  "reviewed_by",          :limit=>4
+    t.datetime "reviewed_on"
+    t.integer  "approved_by",          :limit=>4
+    t.integer  "approved_on",          :limit=>4
+    t.integer  "status",               :limit=>4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "workflow_state",       :limit=>255
+  end
+
+  create_table "registration_authority_validation_steps", force: :cascade do |t|
+    t.string   "name",                  :limit=>255
+    t.text     "description",           :limit=>65535
+    t.integer  "sequence",              :limit=>4
+    t.text     "data",                  :limit=>65535
+    t.string   "event",                 :limit=>255
+    t.string   "partial_path",          :limit=>255
+    t.integer  "validation_profile_id", :limit=>4
+    t.integer  "status",                :limit=>4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "reject_keys", force: :cascade do |t|
     t.string  "fingerprint", :limit=>255, :index=>{:name=>"index_reject_keys_on_fingerprint", :using=>:btree}
     t.string  "algorithm",   :limit=>255
     t.integer "size",        :limit=>4
-    t.string  "source",      :limit=>255, :index=>{:name=>"index_reject_keys_on_source", :using=>:btree}
+    t.string  "source",      :limit=>255
     t.string  "type",        :limit=>255
   end
 
@@ -1288,14 +1454,15 @@ ActiveRecord::Schema.define(version: 20200731200909) do
   end
 
   create_table "sent_reminders", force: :cascade do |t|
-    t.text     "body",          :limit=>65535
-    t.string   "recipients",    :limit=>255, :index=>{:name=>"index_contacts_on_recipients_subject_trigger_value_expires_at", :with=>["subject", "trigger_value", "expires_at"], :using=>:btree}
-    t.string   "subject",       :limit=>255
-    t.string   "trigger_value", :limit=>255
+    t.integer  "signed_certificate_id", :limit=>4
+    t.text     "body",                  :limit=>65535
+    t.string   "recipients",            :limit=>255, :index=>{:name=>"index_contacts_on_recipients_subject_trigger_value_expires_at", :with=>["subject", "trigger_value", "expires_at"], :using=>:btree}
+    t.string   "subject",               :limit=>255
+    t.string   "trigger_value",         :limit=>255
     t.datetime "expires_at"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "reminder_type", :limit=>255
+    t.string   "reminder_type",         :limit=>255
   end
 
   create_table "server_softwares", force: :cascade do |t|
@@ -1576,58 +1743,6 @@ ActiveRecord::Schema.define(version: 20200731200909) do
     t.datetime "updated_at",    :null=>false
   end
   add_index "user_groups_users", ["user_group_id", "user_id"], :name=>"index_user_groups_users_on_user_group_id_and_user_id", :using=>:btree
-
-  create_table "users", force: :cascade do |t|
-    t.integer  "ssl_account_id",      :limit=>4, :index=>{:name=>"index_users_on_ssl_acount_id", :using=>:btree}
-    t.string   "login",               :limit=>255, :null=>false, :index=>{:name=>"index_users_on_login", :using=>:btree}
-    t.string   "email",               :limit=>255, :null=>false, :index=>{:name=>"index_users_on_email", :using=>:btree}
-    t.string   "crypted_password",    :limit=>255
-    t.string   "password_salt",       :limit=>255
-    t.string   "persistence_token",   :limit=>255, :null=>false
-    t.string   "single_access_token", :limit=>255, :null=>false
-    t.string   "perishable_token",    :limit=>255, :null=>false, :index=>{:name=>"index_users_on_perishable_token", :using=>:btree}
-    t.string   "status",              :limit=>255, :index=>{:name=>"index_users_on_status_and_login_and_email", :with=>["login", "email"], :using=>:btree}
-    t.integer  "login_count",         :limit=>4, :default=>0, :null=>false
-    t.integer  "failed_login_count",  :limit=>4, :default=>0, :null=>false
-    t.datetime "last_request_at"
-    t.datetime "current_login_at"
-    t.datetime "last_login_at"
-    t.string   "current_login_ip",    :limit=>255
-    t.string   "last_login_ip",       :limit=>255
-    t.boolean  "active",              :default=>false, :null=>false
-    t.string   "openid_identifier",   :limit=>255
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "first_name",          :limit=>255
-    t.string   "last_name",           :limit=>255
-    t.string   "phone",               :limit=>255
-    t.string   "organization",        :limit=>255
-    t.string   "address1",            :limit=>255
-    t.string   "address2",            :limit=>255
-    t.string   "address3",            :limit=>255
-    t.string   "po_box",              :limit=>255
-    t.string   "postal_code",         :limit=>255
-    t.string   "city",                :limit=>255
-    t.string   "state",               :limit=>255
-    t.string   "country",             :limit=>255
-    t.boolean  "is_auth_token"
-    t.integer  "default_ssl_account", :limit=>4, :index=>{:name=>"index_users_on_default_ssl_account", :using=>:btree}
-    t.integer  "max_teams",           :limit=>4
-    t.integer  "main_ssl_account",    :limit=>4
-    t.boolean  "persist_notice",      :default=>false
-    t.string   "duo_enabled",         :limit=>255, :default=>"enabled"
-    t.string   "avatar_file_name",    :limit=>255
-    t.string   "avatar_content_type", :limit=>255
-    t.integer  "avatar_file_size",    :limit=>4
-    t.datetime "avatar_updated_at"
-    t.string   "authy_user",          :limit=>255
-    t.string   "phone_prefix",        :limit=>255
-  end
-  add_index "users", ["id", "ssl_account_id", "status"], :name=>"index_users_on_status_and_ssl_account_id", :using=>:btree
-  add_index "users", ["id", "status"], :name=>"index_users_on_status", :using=>:btree
-  add_index "users", ["login", "email"], :name=>"index_users_l_e", :type=>:fulltext
-  add_index "users", ["login", "email"], :name=>"index_users_on_login_and_email", :using=>:btree
-  add_index "users", ["ssl_account_id", "login", "email"], :name=>"index_users_on_ssl_account_id_and_login_and_email", :using=>:btree
 
   create_table "v2_migration_progresses", force: :cascade do |t|
     t.string   "source_table_name", :limit=>255

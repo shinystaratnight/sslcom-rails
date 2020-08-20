@@ -1,21 +1,3 @@
-# == Schema Information
-#
-# Table name: tags
-#
-#  id             :integer          not null, primary key
-#  name           :string(255)      not null
-#  taggings_count :integer          default("0"), not null
-#  created_at     :datetime         not null
-#  updated_at     :datetime         not null
-#  ssl_account_id :integer          not null
-#
-# Indexes
-#
-#  index_tags_on_ssl_account_id           (ssl_account_id)
-#  index_tags_on_ssl_account_id_and_name  (ssl_account_id,name)
-#  index_tags_on_taggings_count           (taggings_count)
-#
-
 class Tag < ApplicationRecord
   belongs_to :ssl_account
   has_many :taggings, dependent: :destroy

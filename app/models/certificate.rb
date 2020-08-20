@@ -1,31 +1,3 @@
-# == Schema Information
-#
-# Table name: certificates
-#
-#  id                    :integer          not null, primary key
-#  allow_wildcard_ucc    :boolean
-#  description           :text(65535)
-#  display_order         :string(255)
-#  icons                 :string(255)
-#  product               :string(255)
-#  published_as          :string(16)       default("draft")
-#  roles                 :string(255)      default("--- []")
-#  serial                :string(255)
-#  special_fields        :string(255)      default("--- []")
-#  status                :string(255)
-#  summary               :text(65535)
-#  text_only_description :text(65535)
-#  text_only_summary     :text(65535)
-#  title                 :string(255)
-#  created_at            :datetime
-#  updated_at            :datetime
-#  reseller_tier_id      :integer
-#
-# Indexes
-#
-#  index_certificates_on_reseller_tier_id  (reseller_tier_id)
-#
-
 class Certificate < ApplicationRecord
   extend Memoist
   include CertificateType

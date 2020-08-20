@@ -1,13 +1,3 @@
-# == Schema Information
-#
-# Table name: revocation_notifications
-#
-#  id           :integer          not null, primary key
-#  email        :string(255)
-#  fingerprints :text(65535)
-#  status       :string(255)
-#
-
 class RevocationNotification < ApplicationRecord
   serialize :fingerprints
 

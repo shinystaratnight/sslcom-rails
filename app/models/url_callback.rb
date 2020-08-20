@@ -1,23 +1,3 @@
-# == Schema Information
-#
-# Table name: url_callbacks
-#
-#  id                :integer          not null, primary key
-#  auth              :text(65535)
-#  callbackable_type :string(255)
-#  headers           :text(65535)
-#  method            :string(255)
-#  parameters        :text(65535)
-#  url               :string(255)
-#  created_at        :datetime
-#  updated_at        :datetime
-#  callbackable_id   :integer
-#
-# Indexes
-#
-#  index_url_callbacks_on_callbackable_id_and_callbackable_type  (callbackable_id,callbackable_type)
-#
-
 require 'net/http'
 require 'uri'
 

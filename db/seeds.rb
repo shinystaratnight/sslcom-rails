@@ -550,4 +550,4 @@ Dir[File.join(Rails.root, 'db', 'seeds/', '*.rb')].sort.each do |seed|
   load seed
 end
 
-Pillar::Engine.load_seed
+RegistrationAuthority::Engine.load_seed

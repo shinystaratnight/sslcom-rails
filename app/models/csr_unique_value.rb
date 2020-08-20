@@ -1,18 +1,3 @@
-# == Schema Information
-#
-# Table name: csr_unique_values
-#
-#  id           :integer          not null, primary key
-#  unique_value :string(255)
-#  created_at   :datetime
-#  updated_at   :datetime
-#  csr_id       :integer
-#
-# Indexes
-#
-#  index_csr_unique_values_on_csr_id  (csr_id)
-#
-
 class CsrUniqueValue < ApplicationRecord
   belongs_to  :csr
   has_many    :domain_control_validations

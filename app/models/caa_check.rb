@@ -1,21 +1,3 @@
-# == Schema Information
-#
-# Table name: caa_checks
-#
-#  id             :integer          not null, primary key
-#  checkable_type :string(255)
-#  domain         :string(255)
-#  request        :string(255)
-#  result         :text(65535)
-#  created_at     :datetime
-#  updated_at     :datetime
-#  checkable_id   :integer
-#
-# Indexes
-#
-#  index_caa_checks_on_checkable_id_and_checkable_type  (checkable_id,checkable_type)
-#
-
 class CaaCheck < ApplicationRecord
   belongs_to :checkable, :polymorphic => true
 

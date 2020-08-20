@@ -1,29 +1,3 @@
-# == Schema Information
-#
-# Table name: order_transactions
-#
-#  id           :integer          not null, primary key
-#  action       :string(255)
-#  avs          :text(65535)
-#  cents        :integer
-#  cvv          :text(65535)
-#  fraud_review :string(255)
-#  message      :string(255)
-#  notes        :string(255)
-#  old_amount   :integer
-#  params       :text(65535)
-#  reference    :string(255)
-#  success      :boolean
-#  test         :boolean
-#  created_at   :datetime
-#  updated_at   :datetime
-#  order_id     :integer
-#
-# Indexes
-#
-#  index_order_transactions_on_order_id  (order_id)
-#
-
 class OrderTransaction < ApplicationRecord
   include Stripeable
   

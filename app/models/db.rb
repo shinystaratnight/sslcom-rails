@@ -1,14 +1,3 @@
-# == Schema Information
-#
-# Table name: dbs
-#
-#  id       :integer          not null, primary key
-#  host     :string(255)
-#  name     :string(255)
-#  password :string(255)
-#  username :string(255)
-#
-
 class Db  < ApplicationRecord
 
   # create initial local and global sandboxes

@@ -1,30 +1,3 @@
-# == Schema Information
-#
-# Table name: refunds
-#
-#  id                   :integer          not null, primary key
-#  amount               :integer
-#  merchant             :string(255)
-#  merchant_response    :text(65535)
-#  message              :string(255)
-#  partial_refund       :boolean          default("0")
-#  reason               :string(255)
-#  reference            :string(255)
-#  status               :string(255)
-#  test                 :boolean
-#  created_at           :datetime
-#  updated_at           :datetime
-#  order_id             :integer
-#  order_transaction_id :integer
-#  user_id              :integer
-#
-# Indexes
-#
-#  index_refunds_on_order_id              (order_id)
-#  index_refunds_on_order_transaction_id  (order_transaction_id)
-#  index_refunds_on_user_id               (user_id)
-#
-
 class Refund < ApplicationRecord
   include ActiveMerchant::Billing
 
