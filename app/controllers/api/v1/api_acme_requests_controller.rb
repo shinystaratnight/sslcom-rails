@@ -166,7 +166,8 @@ module Api
         co = ssl_account.certificate_orders.build(co_params)
         certificate_content = CertificateContent.new(
           domains: sans,
-          ca: certificate.cas.ssl_account_or_general_default(ssl_account).last
+          ca: certificate.cas.ssl_account_or_general_default(ssl_account).last,
+          csr: csr
         )
         co.certificate_contents << certificate_content
         certificate_order = Order.setup_certificate_order(
@@ -187,8 +188,6 @@ module Api
           return { result: 'error', error_details: 'Error occurred creating a certificate order.'} unless applied
 
           order.save
-
-          # TODO: Change the workflow_state in certificate_content
         end
       end
 

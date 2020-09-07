@@ -891,6 +891,7 @@ class CertificateContent < ApplicationRecord
 
   def certificate_names_created?
     self.reload
+    return true if csr&.acme_order.present?
     return false if domains.blank? && !certificate_name_from_csr?
     new_domains     = parse_unique_domains(domains)
     current_domains = parse_unique_domains(certificate_names.pluck(:name))
